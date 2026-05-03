@@ -94,6 +94,30 @@
         ]
     },
     {
+        "name": "Pod with local registry with port (localhost:5000/image) is blocked",
+        "template": "pod.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.containers.[0].image=localhost:5000/my-image"
+        ]
+    },
+    {
+        "name": "Pod with official docker.io image with tag is allowed",
+        "template": "pod.yaml",
+        "expected": "pass",
+        "field_change_list": [
+            "spec.containers.[0].image=alpine:latest"
+        ]
+    },
+    {
+        "name": "Pod with localhost registry (no port) is blocked",
+        "template": "pod.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.containers.[0].image=localhost/my-image"
+        ]
+    },
+    {
         "name": "Deployment with docker.io user image (username/image) is allowed",
         "template": "deployment.yaml",
         "expected": "pass",
@@ -123,6 +147,30 @@
         "expected": "fail",
         "field_change_list": [
             "spec.template.spec.containers.[0].image=.evil.com/malware"
+        ]
+    },
+    {
+        "name": "Deployment with local registry with port (localhost:5000/image) is blocked",
+        "template": "deployment.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.template.spec.containers.[0].image=localhost:5000/my-image"
+        ]
+    },
+    {
+        "name": "Deployment with official docker.io image with tag is allowed",
+        "template": "deployment.yaml",
+        "expected": "pass",
+        "field_change_list": [
+            "spec.template.spec.containers.[0].image=alpine:latest"
+        ]
+    },
+    {
+        "name": "Deployment with localhost registry (no port) is blocked",
+        "template": "deployment.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.template.spec.containers.[0].image=localhost/my-image"
         ]
     }
 ]

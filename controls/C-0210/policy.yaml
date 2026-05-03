@@ -1,0 +1,31 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "kubescape-c-0210-deny-seccomp-profile-unconfined"
+  labels:
+    controlId: "C-0210"
+  annotations:
+    controlUrl: "https://kubescape.io/docs/controls/c-0210/"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups:   [""]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["pods"]
+    - apiGroups:   ["apps"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["deployments","replicasets","daemonsets","statefulsets"]
+    - apiGroups:   ["batch"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["jobs","cronjobs"]
+  validations:
+    - expression: "object.kind != 'Pod' || object.spec.containers.all(container, has(container.securityContext) && has(container.securityContext.seccompProfile) && has(container.securityContext.seccompProfile.type) && container.securityContext.seccompProfile.type != 'Unconfined')"
+      message: "Pods must define a seccomp profile other than Unconfined (see more at https://kubescape.io/docs/controls/c-0210/)"
+    - expression: "['Deployment','ReplicaSet','DaemonSet','StatefulSet','Job'].all(kind, object.kind != kind) || object.spec.template.spec.containers.all(container, has(container.securityContext) && has(container.securityContext.seccompProfile) && has(container.securityContext.seccompProfile.type) && container.securityContext.seccompProfile.type != 'Unconfined')"
+      message: "Workloads must define a seccomp profile other than Unconfined (see more at https://kubescape.io/docs/controls/c-0210/)"
+    - expression: "object.kind != 'CronJob' || object.spec.jobTemplate.spec.template.spec.containers.all(container, has(container.securityContext) && has(container.securityContext.seccompProfile) && has(container.securityContext.seccompProfile.type) && container.securityContext.seccompProfile.type != 'Unconfined')"
+      message: "CronJobs must define a seccomp profile other than Unconfined (see more at https://kubescape.io/docs/controls/c-0210/)"

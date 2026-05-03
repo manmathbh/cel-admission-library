@@ -1,0 +1,31 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "kubescape-c-0198-deny-root-containers"
+  labels:
+    controlId: "C-0198"
+  annotations:
+    controlUrl: "https://kubescape.io/docs/controls/c-0198/"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups:   [""]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["pods"]
+    - apiGroups:   ["apps"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["deployments","replicasets","daemonsets","statefulsets"]
+    - apiGroups:   ["batch"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["jobs","cronjobs"]
+  validations:
+    - expression: "object.kind != 'Pod' || object.spec.containers.all(container, !has(container.securityContext) || !has(container.securityContext.runAsUser) || container.securityContext.runAsUser != 0 || (has(container.securityContext.runAsNonRoot) && container.securityContext.runAsNonRoot == true))"
+      message: "Pods must not explicitly run containers as root (UID 0) (see more at https://kubescape.io/docs/controls/c-0198/)"
+    - expression: "['Deployment','ReplicaSet','DaemonSet','StatefulSet','Job'].all(kind, object.kind != kind) || object.spec.template.spec.containers.all(container, !has(container.securityContext) || !has(container.securityContext.runAsUser) || container.securityContext.runAsUser != 0 || (has(container.securityContext.runAsNonRoot) && container.securityContext.runAsNonRoot == true))"
+      message: "Workloads must not explicitly run containers as root (UID 0) (see more at https://kubescape.io/docs/controls/c-0198/)"
+    - expression: "object.kind != 'CronJob' || object.spec.jobTemplate.spec.template.spec.containers.all(container, !has(container.securityContext) || !has(container.securityContext.runAsUser) || container.securityContext.runAsUser != 0 || (has(container.securityContext.runAsNonRoot) && container.securityContext.runAsNonRoot == true))"
+      message: "CronJobs must not explicitly run containers as root (UID 0) (see more at https://kubescape.io/docs/controls/c-0198/)"

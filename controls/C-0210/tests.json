@@ -1,0 +1,48 @@
+[
+    {
+        "name": "Pod with seccomp RuntimeDefault is allowed",
+        "template": "pod.yaml",
+        "expected": "pass",
+        "field_change_list": [
+            "spec.containers.[0].securityContext.seccompProfile.type=RuntimeDefault"
+        ]
+    },
+    {
+        "name": "Pod with seccomp Localhost is allowed",
+        "template": "pod.yaml",
+        "expected": "pass",
+        "field_change_list": [
+            "spec.containers.[0].securityContext.seccompProfile.type=Localhost",
+            "spec.containers.[0].securityContext.seccompProfile.localhostProfile=profiles/audit.json"
+        ]
+    },
+    {
+        "name": "Pod with seccomp Unconfined is blocked",
+        "template": "pod.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.containers.[0].securityContext.seccompProfile.type=Unconfined"
+        ]
+    },
+    {
+        "name": "Pod without seccomp profile is blocked",
+        "template": "pod.yaml",
+        "expected": "fail"
+    },
+    {
+        "name": "Deployment with seccomp RuntimeDefault is allowed",
+        "template": "deployment.yaml",
+        "expected": "pass",
+        "field_change_list": [
+            "spec.template.spec.containers.[0].securityContext.seccompProfile.type=RuntimeDefault"
+        ]
+    },
+    {
+        "name": "Deployment with seccomp Unconfined is blocked",
+        "template": "deployment.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.template.spec.containers.[0].securityContext.seccompProfile.type=Unconfined"
+        ]
+    }
+]

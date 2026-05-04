@@ -30,23 +30,23 @@ spec:
         object.kind != 'Pod' ||
         object.spec.containers.all(container, params.settings.imageRepositoryAllowList.exists(registry,
         (
-          (registry == 'docker.io' && !container.image.contains('/')) ||
-          (container.image.startsWith(registry))
+          (registry == 'docker.io' && (!container.image.contains('/') || (!container.image.split('/')[0].contains('.') && !container.image.split('/')[0].contains(':') && container.image.split('/')[0] != 'localhost'))) ||
+          (container.image.startsWith(registry + '/'))
         )))
       message: "Pods uses an image from a registry that is not in the allow list! (see more at https://kubescape.io/docs/controls/c-0078/)"
     - expression: >
         ['Deployment','ReplicaSet','DaemonSet','StatefulSet','Job'].all(kind, object.kind != kind) ||
         object.spec.template.spec.containers.all(container, params.settings.imageRepositoryAllowList.exists(registry,
         (
-          (registry == 'docker.io' && !container.image.contains('/')) ||
-          (container.image.startsWith(registry))
+          (registry == 'docker.io' && (!container.image.contains('/') || (!container.image.split('/')[0].contains('.') && !container.image.split('/')[0].contains(':') && container.image.split('/')[0] != 'localhost'))) ||
+          (container.image.startsWith(registry + '/'))
         )))
       message: "Workloads uses an image from a registry that is not in the allow list! (see more at https://kubescape.io/docs/controls/c-0078/)"
     - expression: >
         object.kind != 'CronJob' ||
         object.spec.jobTemplate.spec.template.spec.containers.all(container, params.settings.imageRepositoryAllowList.exists(registry,
         (
-          (registry == 'docker.io' && !container.image.contains('/')) ||
-          (container.image.startsWith(registry))
+          (registry == 'docker.io' && (!container.image.contains('/') || (!container.image.split('/')[0].contains('.') && !container.image.split('/')[0].contains(':') && container.image.split('/')[0] != 'localhost'))) ||
+          (container.image.startsWith(registry + '/'))
         )))
       message: "CronJob uses an image from a registry that is not in the allow list! (see more at https://kubescape.io/docs/controls/c-0078/)"

@@ -1,0 +1,44 @@
+[
+    {
+        "name": "ClusterRole without CSR approval access is allowed",
+        "template": "cluster-role.yaml",
+        "expected": "pass",
+        "field_change_list": [
+        ]
+    },
+    {
+        "name": "ClusterRole with certificatesigningrequests/approval is blocked",
+        "template": "cluster-role-csr-approval.yaml",
+        "expected": "fail",
+        "field_change_list": [
+        ]
+    },
+    {
+        "name": "ClusterRole with certificatesigningrequests/* is blocked",
+        "template": "cluster-role-csr-subresource-star.yaml",
+        "expected": "fail",
+        "field_change_list": [
+        ]
+    },
+    {
+        "name": "Role without CSR approval access is allowed",
+        "template": "role.yaml",
+        "expected": "pass",
+        "field_change_list": [
+        ]
+    },
+    {
+        "name": "Role with certificatesigningrequests/approval is blocked",
+        "template": "role-csr-approval.yaml",
+        "expected": "fail",
+        "field_change_list": [
+        ]
+    },
+    {
+        "name": "Role with certificatesigningrequests/* is blocked",
+        "template": "role-csr-subresource-star.yaml",
+        "expected": "fail",
+        "field_change_list": [
+        ]
+    }
+]

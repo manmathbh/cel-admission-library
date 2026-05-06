@@ -1,0 +1,29 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "kubescape-c-0280-deny-access-to-csr-approval-subresource"
+  labels:
+    controlId: "C-0280"
+  annotations:
+    controlUrl: "https://kubescape.io/docs/controls/c-0280/"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups:   ["rbac.authorization.k8s.io"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["roles", "clusterroles", "rolebindings", "clusterrolebindings"]
+  validations:
+    - expression: >
+        ['Role', 'ClusterRole'].all(kind, object.kind != kind) ||
+        object.rules.all(rule,
+          !(
+            has(rule.resources) && rule.resources.exists(r,
+              r == "certificatesigningrequests/approval" || r == "certificatesigningrequests/*")
+          )
+        )
+      message: "RBAC Role or ClusterRole has access to the certificatesigningrequests/approval sub-resource which can lead to privilege escalation! (see more at https://kubescape.io/docs/controls/c-0280/)"
+    - expression: >
+        ['RoleBinding', 'ClusterRoleBinding'].all(kind, object.kind != kind)
+      message: "RBAC binding allowed — ensure referenced role does not grant access to certificatesigningrequests/approval! (see more at https://kubescape.io/docs/controls/c-0280/)"

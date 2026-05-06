@@ -30,6 +30,7 @@ resources:
 - C-0077/policy.yaml
 - C-0078/policy.yaml
 - C-0210/policy.yaml
+- C-0280/policy.yaml
 - C-0268/policy.yaml
 - C-0269/policy.yaml
 - C-0270/policy.yaml

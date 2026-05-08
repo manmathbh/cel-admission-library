@@ -34,11 +34,11 @@ spec:
       name: containers
     - expression: |
         object.kind == 'Pod'
-          ? object.spec.securityContext
+          ? (has(object.spec.securityContext) ? object.spec.securityContext : {})
           : object.kind in ['Deployment','ReplicaSet','DaemonSet','StatefulSet','Job']
-            ? object.spec.template.spec.securityContext
+            ? (has(object.spec.template.spec.securityContext) ? object.spec.template.spec.securityContext : {})
             : object.kind == 'CronJob'
-              ? object.spec.jobTemplate.spec.template.spec.securityContext
+              ? (has(object.spec.jobTemplate.spec.template.spec.securityContext) ? object.spec.jobTemplate.spec.template.spec.securityContext : {})
               : {}
       name: podSecurityContext
   validations:

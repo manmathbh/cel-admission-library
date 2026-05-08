@@ -1,0 +1,55 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "kubescape-c-0210-deny-seccomp-profile-unconfined"
+  labels:
+    controlId: "C-0210"
+  annotations:
+    controlUrl: "https://kubescape.io/docs/controls/c-0210/"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups:   [""]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["pods", "pods/ephemeralcontainers"]
+    - apiGroups:   ["apps"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["deployments","replicasets","daemonsets","statefulsets"]
+    - apiGroups:   ["batch"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["jobs","cronjobs"]
+  variables:
+    - expression: |
+        object.kind == 'Pod'
+          ? object.spec.containers + (has(object.spec.initContainers) ? object.spec.initContainers : []) + (has(object.spec.ephemeralContainers) ? object.spec.ephemeralContainers : [])
+          : object.kind in ['Deployment','ReplicaSet','DaemonSet','StatefulSet','Job']
+            ? object.spec.template.spec.containers + (has(object.spec.template.spec.initContainers) ? object.spec.template.spec.initContainers : []) + (has(object.spec.template.spec.ephemeralContainers) ? object.spec.template.spec.ephemeralContainers : [])
+            : object.kind == 'CronJob'
+              ? object.spec.jobTemplate.spec.template.spec.containers + (has(object.spec.jobTemplate.spec.template.spec.initContainers) ? object.spec.jobTemplate.spec.template.spec.initContainers : []) + (has(object.spec.jobTemplate.spec.template.spec.ephemeralContainers) ? object.spec.jobTemplate.spec.template.spec.ephemeralContainers : [])
+              : []
+      name: containers
+    - expression: |
+        object.kind == 'Pod'
+          ? (has(object.spec.securityContext) ? object.spec.securityContext : {})
+          : object.kind in ['Deployment','ReplicaSet','DaemonSet','StatefulSet','Job']
+            ? (has(object.spec.template.spec.securityContext) ? object.spec.template.spec.securityContext : {})
+            : object.kind == 'CronJob'
+              ? (has(object.spec.jobTemplate.spec.template.spec.securityContext) ? object.spec.jobTemplate.spec.template.spec.securityContext : {})
+              : {}
+      name: podSecurityContext
+  validations:
+    - expression: >
+        variables.containers.all(container,
+          (has(container.securityContext) && has(container.securityContext.seccompProfile) && has(container.securityContext.seccompProfile.type)
+            ? container.securityContext.seccompProfile.type
+            : (has(variables.podSecurityContext) && has(variables.podSecurityContext.seccompProfile) && has(variables.podSecurityContext.seccompProfile.type)
+                ? variables.podSecurityContext.seccompProfile.type
+                : 'Unconfined')
+          ) != 'Unconfined'
+        )
+      message: >
+        object.kind + '/' + object.metadata.name + ' has a container with seccomp profile Unconfined or undefined. (see more at https://kubescape.io/docs/controls/c-0210/)'

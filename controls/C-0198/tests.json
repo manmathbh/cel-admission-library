@@ -1,0 +1,65 @@
+[
+    {
+        "name": "Pod with runAsUser non-zero is allowed",
+        "template": "pod.yaml",
+        "expected": "pass",
+        "field_change_list": [
+            "spec.containers.[0].securityContext.runAsUser=1000"
+        ]
+    },
+    {
+        "name": "Pod with runAsUser set to 0 is blocked",
+        "template": "pod.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.containers.[0].securityContext.runAsUser=0"
+        ]
+    },
+    {
+        "name": "Pod without securityContext is allowed",
+        "template": "pod.yaml",
+        "expected": "pass"
+    },
+    {
+        "name": "Pod with pod-level runAsUser set to 0 is blocked",
+        "template": "pod.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.securityContext.runAsUser=0"
+        ]
+    },
+    {
+        "name": "Pod with runAsUser 0 and runAsNonRoot true is blocked",
+        "template": "pod.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.containers.[0].securityContext.runAsUser=0",
+            "spec.containers.[0].securityContext.runAsNonRoot=true"
+        ]
+    },
+    {
+        "name": "Deployment with runAsUser set to 0 is blocked",
+        "template": "deployment.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.template.spec.containers.[0].securityContext.runAsUser=0"
+        ]
+    },
+    {
+        "name": "Deployment with pod-level runAsUser set to 0 is blocked",
+        "template": "deployment.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.template.spec.securityContext.runAsUser=0"
+        ]
+    },
+    {
+        "name": "Pod with runAsNonRoot and pod-level runAsUser 1000 is allowed",
+        "template": "pod.yaml",
+        "expected": "pass",
+        "field_change_list": [
+            "spec.containers.[0].securityContext.runAsNonRoot=true",
+            "spec.securityContext.runAsUser=1000"
+        ]
+    }
+]

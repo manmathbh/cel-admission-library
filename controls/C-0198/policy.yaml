@@ -1,0 +1,55 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "kubescape-c-0198-deny-root-containers"
+  labels:
+    controlId: "C-0198"
+  annotations:
+    controlUrl: "https://kubescape.io/docs/controls/c-0198/"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups:   [""]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["pods", "pods/ephemeralcontainers"]
+    - apiGroups:   ["apps"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["deployments","replicasets","daemonsets","statefulsets"]
+    - apiGroups:   ["batch"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["jobs","cronjobs"]
+  variables:
+    - expression: |
+        object.kind == 'Pod'
+          ? object.spec.containers + (has(object.spec.initContainers) ? object.spec.initContainers : []) + (has(object.spec.ephemeralContainers) ? object.spec.ephemeralContainers : [])
+          : object.kind in ['Deployment','ReplicaSet','DaemonSet','StatefulSet','Job']
+            ? object.spec.template.spec.containers + (has(object.spec.template.spec.initContainers) ? object.spec.template.spec.initContainers : []) + (has(object.spec.template.spec.ephemeralContainers) ? object.spec.template.spec.ephemeralContainers : [])
+            : object.kind == 'CronJob'
+              ? object.spec.jobTemplate.spec.template.spec.containers + (has(object.spec.jobTemplate.spec.template.spec.initContainers) ? object.spec.jobTemplate.spec.template.spec.initContainers : []) + (has(object.spec.jobTemplate.spec.template.spec.ephemeralContainers) ? object.spec.jobTemplate.spec.template.spec.ephemeralContainers : [])
+              : []
+      name: containers
+    - expression: |
+        object.kind == 'Pod'
+          ? (has(object.spec.securityContext) ? object.spec.securityContext : {})
+          : object.kind in ['Deployment','ReplicaSet','DaemonSet','StatefulSet','Job']
+            ? (has(object.spec.template.spec.securityContext) ? object.spec.template.spec.securityContext : {})
+            : object.kind == 'CronJob'
+              ? (has(object.spec.jobTemplate.spec.template.spec.securityContext) ? object.spec.jobTemplate.spec.template.spec.securityContext : {})
+              : {}
+      name: podSecurityContext
+  validations:
+    - expression: >
+        variables.containers.all(container,
+          (has(container.securityContext) && has(container.securityContext.runAsUser)
+            ? container.securityContext.runAsUser
+            : (has(variables.podSecurityContext) && has(variables.podSecurityContext.runAsUser)
+                ? variables.podSecurityContext.runAsUser
+                : -1)
+          ) != 0
+        )
+      message: >
+        object.kind + '/' + object.metadata.name + ' has a container explicitly running as root (UID 0). (see more at https://kubescape.io/docs/controls/c-0198/)'

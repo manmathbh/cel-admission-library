@@ -40,5 +40,21 @@
         "expected": "fail",
         "field_change_list": [
         ]
+    },
+    {
+        "name": "ClusterRole with resources wildcard * is blocked",
+        "template": "cluster-role.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "rules.[0].resources=[\"*\"]"
+        ]
+    },
+    {
+        "name": "Role with resources wildcard * is blocked",
+        "template": "role.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "rules.[0].resources=[\"*\"]"
+        ]
     }
 ]

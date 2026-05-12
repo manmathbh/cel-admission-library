@@ -1,0 +1,88 @@
+[
+    {
+        "name": "ClusterRole without CSR approval access is allowed",
+        "template": "cluster-role.yaml",
+        "expected": "pass",
+        "field_change_list": [
+        ]
+    },
+    {
+        "name": "ClusterRole with certificatesigningrequests/approval is blocked",
+        "template": "cluster-role-csr-approval.yaml",
+        "expected": "fail",
+        "field_change_list": [
+        ]
+    },
+    {
+        "name": "ClusterRole with certificatesigningrequests/* is blocked",
+        "template": "cluster-role-csr-subresource-star.yaml",
+        "expected": "fail",
+        "field_change_list": [
+        ]
+    },
+    {
+        "name": "Role without CSR approval access is allowed",
+        "template": "role.yaml",
+        "expected": "pass",
+        "field_change_list": [
+        ]
+    },
+    {
+        "name": "Role with certificatesigningrequests/approval is blocked",
+        "template": "role-csr-approval.yaml",
+        "expected": "fail",
+        "field_change_list": [
+        ]
+    },
+    {
+        "name": "Role with certificatesigningrequests/* is blocked",
+        "template": "role-csr-subresource-star.yaml",
+        "expected": "fail",
+        "field_change_list": [
+        ]
+    },
+    {
+        "name": "ClusterRole with resources * and cert apiGroup is blocked",
+        "template": "cluster-role.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "rules.[0].resources=[\"*\"]",
+            "rules.[0].apiGroups=[\"certificates.k8s.io\"]",
+            "rules.[0].verbs=[\"update\"]"
+        ]
+    },
+    {
+        "name": "Role with resources * and cert apiGroup is blocked",
+        "template": "role.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "rules.[0].resources=[\"*\"]",
+            "rules.[0].apiGroups=[\"certificates.k8s.io\"]",
+            "rules.[0].verbs=[\"update\"]"
+        ]
+    },
+    {
+        "name": "ClusterRole with resources * and core apiGroup is allowed",
+        "template": "cluster-role.yaml",
+        "expected": "pass",
+        "field_change_list": [
+            "rules.[0].resources=[\"*\"]"
+        ]
+    },
+    {
+        "name": "ClusterRole with CSR approval but read-only verbs is allowed",
+        "template": "cluster-role-csr-approval.yaml",
+        "expected": "pass",
+        "field_change_list": [
+            "rules.[0].verbs=[\"get\"]"
+        ]
+    },
+    {
+        "name": "ClusterRole with CSR approval and patch verb is blocked",
+        "template": "cluster-role-csr-approval.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "rules.[0].verbs=[\"patch\"]"
+        ]
+    }
+]

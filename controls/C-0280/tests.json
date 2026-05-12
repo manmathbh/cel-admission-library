@@ -47,7 +47,8 @@
         "expected": "fail",
         "field_change_list": [
             "rules.[0].resources=[\"*\"]",
-            "rules.[0].apiGroups=[\"certificates.k8s.io\"]"
+            "rules.[0].apiGroups=[\"certificates.k8s.io\"]",
+            "rules.[0].verbs=[\"update\"]"
         ]
     },
     {
@@ -56,7 +57,8 @@
         "expected": "fail",
         "field_change_list": [
             "rules.[0].resources=[\"*\"]",
-            "rules.[0].apiGroups=[\"certificates.k8s.io\"]"
+            "rules.[0].apiGroups=[\"certificates.k8s.io\"]",
+            "rules.[0].verbs=[\"update\"]"
         ]
     },
     {

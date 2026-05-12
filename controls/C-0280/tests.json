@@ -74,5 +74,13 @@
         "field_change_list": [
             "rules.[0].verbs=[\"get\"]"
         ]
+    },
+    {
+        "name": "ClusterRole with CSR approval and patch verb is blocked",
+        "template": "cluster-role-csr-approval.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "rules.[0].verbs=[\"patch\"]"
+        ]
     }
 ]

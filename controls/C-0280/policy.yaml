@@ -19,8 +19,13 @@ spec:
         ['Role', 'ClusterRole'].all(kind, object.kind != kind) ||
         object.rules.all(rule,
           !(
-            has(rule.resources) && rule.resources.exists(r,
-              r == "certificatesigningrequests/approval" || r == "certificatesigningrequests/*" || r == "*" || r == "*/*")
+            has(rule.resources) && (
+              rule.resources.exists(r, r == "certificatesigningrequests/approval" || r == "certificatesigningrequests/*")
+              ||
+              (rule.resources.exists(r, r == "*" || r == "*/*") && has(rule.apiGroups) && rule.apiGroups.exists(g, g == "certificates.k8s.io" || g == "*"))
+            )
+            &&
+            has(rule.verbs) && rule.verbs.exists(v, v == "update" || v == "*")
           )
         )
       message: "RBAC Role or ClusterRole has access to the certificatesigningrequests/approval sub-resource which can lead to privilege escalation! (see more at https://kubescape.io/docs/controls/c-0280/)"

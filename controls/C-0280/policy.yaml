@@ -13,7 +13,7 @@ spec:
     - apiGroups:   ["rbac.authorization.k8s.io"]
       apiVersions: ["v1"]
       operations:  ["CREATE", "UPDATE"]
-      resources:   ["roles", "clusterroles", "rolebindings", "clusterrolebindings"]
+      resources:   ["roles", "clusterroles"]
   validations:
     - expression: >
         ['Role', 'ClusterRole'].all(kind, object.kind != kind) ||
@@ -24,6 +24,3 @@ spec:
           )
         )
       message: "RBAC Role or ClusterRole has access to the certificatesigningrequests/approval sub-resource which can lead to privilege escalation! (see more at https://kubescape.io/docs/controls/c-0280/)"
-    - expression: >
-        ['RoleBinding', 'ClusterRoleBinding'].all(kind, object.kind != kind)
-      message: "RBAC binding allowed — ensure referenced role does not grant access to certificatesigningrequests/approval! (see more at https://kubescape.io/docs/controls/c-0280/)"

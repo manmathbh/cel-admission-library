@@ -1,0 +1,9 @@
+[
+    {
+        "name": "Any CronJob is flagged for review",
+        "template": "cronjob.yaml",
+        "expected": "fail",
+        "field_change_list": [
+        ]
+    }
+]

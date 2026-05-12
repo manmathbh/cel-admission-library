@@ -1,0 +1,19 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "kubescape-c-0026-deny-cronjobs"
+  labels:
+    controlId: "C-0026"
+  annotations:
+    controlUrl: "https://kubescape.io/docs/controls/c-0026/"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups:   ["batch"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["cronjobs"]
+  validations:
+    - expression: "object.kind != 'CronJob'"
+      message: "CronJob detected and flagged for review (see more at https://kubescape.io/docs/controls/c-0026/)"

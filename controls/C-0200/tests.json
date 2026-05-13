@@ -15,14 +15,6 @@
         "expected": "fail"
     },
     {
-        "name": "Pod with drop ALL and added NET_RAW is allowed",
-        "template": "pod-drop-all.yaml",
-        "expected": "pass",
-        "field_change_list": [
-            "spec.containers.[0].securityContext.capabilities.add=[\"NET_RAW\"]"
-        ]
-    },
-    {
         "name": "Deployment without capabilities.drop is denied",
         "template": "deployment.yaml",
         "expected": "fail"

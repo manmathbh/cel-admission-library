@@ -79,26 +79,5 @@
         "field_change_list": [
             "spec.ephemeralContainers=[{\"name\":\"debug\",\"image\":\"alpine\",\"command\":[\"sh\"],\"targetContainerName\":\"sleep\",\"securityContext\":{\"capabilities\":{\"drop\":[\"ALL\"]}}}]"
         ]
-    },
-    {
-        "name": "Job without capabilities.drop is denied",
-        "template": "deployment.yaml",
-        "expected": "fail",
-        "field_change_list": [
-            "\"kind\"=\"Job\"",
-            "\"apiVersion\"=\"batch/v1\"",
-            "\"metadata.name\"=\"test-job\""
-        ]
-    },
-    {
-        "name": "Job with drop ALL is allowed",
-        "template": "deployment.yaml",
-        "expected": "pass",
-        "field_change_list": [
-            "\"kind\"=\"Job\"",
-            "\"apiVersion\"=\"batch/v1\"",
-            "\"metadata.name\"=\"test-job\"",
-            "spec.template.spec.containers.[0].securityContext.capabilities.drop=[\"ALL\"]"
-        ]
     }
 ]

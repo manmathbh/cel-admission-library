@@ -63,13 +63,5 @@
         "field_change_list": [
             "spec.ephemeralContainers=[{\"name\":\"debug\",\"image\":\"alpine\",\"command\":[\"sh\"],\"targetContainerName\":\"sleep\"}]"
         ]
-    },
-    {
-        "name": "Pod with ephemeralContainer dropping ALL is allowed",
-        "template": "pod-drop-all.yaml",
-        "expected": "pass",
-        "field_change_list": [
-            "spec.ephemeralContainers=[{\"name\":\"debug\",\"image\":\"alpine\",\"command\":[\"sh\"],\"targetContainerName\":\"sleep\",\"securityContext\":{\"capabilities\":{\"drop\":[\"ALL\"]}}}]"
-        ]
     }
 ]

@@ -26,6 +26,14 @@
         ]
     },
     {
+        "name": "Deployment with hostPID set true is blocked",
+        "template": "deployment.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.template.spec.hostPID=true"
+        ]
+    },
+    {
         "name": "Deployment without hostIPC and hostPID is allowed",
         "template": "deployment.yaml",
         "expected": "pass"
@@ -56,6 +64,23 @@
         "expected": "fail",
         "field_change_list": [
             "spec.hostIPC=true"
+        ]
+    },
+    {
+        "name": "CronJob with hostIPC set true and hostPID set to false is blocked",
+        "template": "cronjob.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.jobTemplate.spec.template.spec.hostIPC=true",
+            "spec.jobTemplate.spec.template.spec.hostPID=false"
+        ]
+    },
+    {
+        "name": "CronJob with hostPID set true is blocked",
+        "template": "cronjob.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.jobTemplate.spec.template.spec.hostPID=true"
         ]
     },
     {

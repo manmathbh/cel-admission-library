@@ -41,6 +41,38 @@
 
 
     {
+        "name": "ReplicaSet with hostIPC set true is blocked",
+        "template": "replicaset.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.template.spec.hostIPC=true"
+        ]
+    },
+    {
+        "name": "DaemonSet with hostIPC set true is blocked",
+        "template": "daemonset.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.template.spec.hostIPC=true"
+        ]
+    },
+    {
+        "name": "StatefulSet with hostIPC set true is blocked",
+        "template": "statefulset.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.template.spec.hostIPC=true"
+        ]
+    },
+    {
+        "name": "Job with hostIPC set true is blocked",
+        "template": "job.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.template.spec.hostIPC=true"
+        ]
+    },
+    {
         "name": "Pod with both hostIPC and hostPID set to true is blocked",
         "template": "pod.yaml",
         "expected": "fail",

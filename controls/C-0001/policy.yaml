@@ -25,10 +25,23 @@ spec:
       apiVersions: ["v1"]
       operations:  ["CREATE", "UPDATE"]
       resources:   ["jobs","cronjobs"]
+  variables:
+    - expression: |
+        object.kind == 'Pod' ? object.spec.containers
+        : object.kind in ['Deployment','ReplicaSet','DaemonSet','StatefulSet','Job'] ? object.spec.template.spec.containers
+        : object.kind == 'CronJob' ? object.spec.jobTemplate.spec.template.spec.containers
+        : []
+      name: containers
   validations:
-    - expression: "object.kind != 'Pod' || object.spec.containers.all(container, params.settings.untrustedRegistries.all(registry,!container.image.startsWith(registry)))"
-      message: "Pods uses an image from a forbidden registry! (see more at https://kubescape.io/docs/controls/c-0001/)"
-    - expression: "['Deployment','ReplicaSet','DaemonSet','StatefulSet','Job'].all(kind, object.kind != kind) || object.spec.template.spec.containers.all(container, params.settings.untrustedRegistries.all(registry,!container.image.startsWith(registry)))"
-      message: "Workloads uses an image from a forbidden registry! (see more at https://kubescape.io/docs/controls/c-0001/)"
-    - expression: "object.kind != 'CronJob' || object.spec.jobTemplate.spec.template.spec.containers.all(container, params.settings.untrustedRegistries.all(registry,!container.image.startsWith(registry)))"
-      message: "CronJob uses an image from a forbidden registry! (see more at https://kubescape.io/docs/controls/c-0001/)"
+    - expression: >
+        variables.containers.all(container, params.settings.untrustedRegistries.all(registry,
+        !(
+          ((registry in ['docker.io', 'docker.io/', 'index.docker.io', 'index.docker.io/', 'registry-1.docker.io', 'registry-1.docker.io/']) &&
+            (!container.image.contains('/') ||
+              (!container.image.split('/')[0].contains('.') &&
+               !container.image.split('/')[0].contains(':') &&
+               container.image.split('/')[0] != 'localhost') ||
+              container.image.split('/')[0] in ['docker.io', 'index.docker.io', 'registry-1.docker.io'])) ||
+          container.image.startsWith(registry.endsWith('/') ? registry : registry + '/')
+        )))
+      messageExpression: 'object.kind + "/" + object.metadata.name + " uses an image from a forbidden registry! (see more at https://kubescape.io/docs/controls/c-0001/)"'

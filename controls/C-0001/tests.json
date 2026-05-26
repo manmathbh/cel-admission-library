@@ -8,10 +8,59 @@
         ]
     },
     {
-        "name": "Pod without image from quay.io is allowed",
+        "name": "Pod with image from an unlisted registry is allowed",
         "template": "pod.yaml",
         "expected": "pass",
         "field_change_list": [
+            "spec.containers.[0].image=ghcr.io/example/app:latest"
+        ]
+    },
+    {
+        "name": "Pod with implicit Docker Hub image is blocked when docker.io is forbidden",
+        "template": "pod.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.containers.[0].image=nginx"
+        ]
+    },
+    {
+        "name": "Pod with Docker Hub namespace image is blocked when docker.io is forbidden",
+        "template": "pod.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.containers.[0].image=library/nginx"
+        ]
+    },
+    {
+        "name": "Pod with explicit Docker Hub image is blocked",
+        "template": "pod.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.containers.[0].image=docker.io/library/nginx"
+        ]
+    },
+    {
+        "name": "Pod with index.docker.io Docker Hub alias is blocked",
+        "template": "pod.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.containers.[0].image=index.docker.io/library/nginx"
+        ]
+    },
+    {
+        "name": "Pod with registry-1.docker.io Docker Hub alias is blocked",
+        "template": "pod.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.containers.[0].image=registry-1.docker.io/library/nginx"
+        ]
+    },
+    {
+        "name": "Pod with registry prefix spoofing is not matched as docker.io",
+        "template": "pod.yaml",
+        "expected": "pass",
+        "field_change_list": [
+            "spec.containers.[0].image=docker.io.evil.com/nginx"
         ]
     },
     {
@@ -23,10 +72,27 @@
         ]
     },
     {
-        "name": "CronJob without image from quay.io is allowed",
+        "name": "CronJob with image from an unlisted registry is allowed",
         "template": "cronjob.yaml",
         "expected": "pass",
         "field_change_list": [
+            "spec.jobTemplate.spec.template.spec.containers.[0].image=ghcr.io/example/app:latest"
+        ]
+    },
+    {
+        "name": "CronJob with implicit Docker Hub image is blocked when docker.io is forbidden",
+        "template": "cronjob.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.jobTemplate.spec.template.spec.containers.[0].image=busybox:1.35"
+        ]
+    },
+    {
+        "name": "CronJob with gcr.io prefix spoofing is not matched as gcr.io",
+        "template": "cronjob.yaml",
+        "expected": "pass",
+        "field_change_list": [
+            "spec.jobTemplate.spec.template.spec.containers.[0].image=gcr.io.evil.com/app:latest"
         ]
     }
 ]

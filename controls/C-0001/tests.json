@@ -40,6 +40,22 @@
         ]
     },
     {
+        "name": "Pod with index.docker.io Docker Hub alias is blocked",
+        "template": "pod.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.containers.[0].image=index.docker.io/library/nginx"
+        ]
+    },
+    {
+        "name": "Pod with registry-1.docker.io Docker Hub alias is blocked",
+        "template": "pod.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.containers.[0].image=registry-1.docker.io/library/nginx"
+        ]
+    },
+    {
         "name": "Pod with registry prefix spoofing is not matched as docker.io",
         "template": "pod.yaml",
         "expected": "pass",

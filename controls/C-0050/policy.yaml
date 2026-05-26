@@ -28,27 +28,27 @@ spec:
   validations:
     - expression: >
         object.kind != 'Pod' || object.spec.containers.all(container, (!(!(has(container.resources)) || !(has(container.resources.requests)) || !(has(container.resources.requests.cpu))) &&
-        params.settings.cpuRequestMin <= int(container.resources.requests.cpu) &&
-        params.settings.cpuRequestMax >= int(container.resources.requests.cpu)) &&
+        quantity(string(params.settings.cpuRequestMin)).compareTo(quantity(string(container.resources.requests.cpu))) != 1 &&
+        quantity(string(params.settings.cpuRequestMax)).compareTo(quantity(string(container.resources.requests.cpu))) != -1) &&
         (!(!(has(container.resources.limits)) || !(has(container.resources.limits.cpu))) &&
-        params.settings.cpuLimitMin <= int(container.resources.limits.cpu) &&
-        params.settings.cpuLimitMax >= int(container.resources.limits.cpu)))
+        quantity(string(params.settings.cpuLimitMin)).compareTo(quantity(string(container.resources.limits.cpu))) != 1 &&
+        quantity(string(params.settings.cpuLimitMax)).compareTo(quantity(string(container.resources.limits.cpu))) != -1))
       message: "Pods contains container/s with cpu limit or request not set or they are not in the specified range! (see more at https://kubescape.io/docs/controls/c-0050/)"
 
     - expression: >
         ['Deployment','ReplicaSet','DaemonSet','StatefulSet','Job'].all(kind, object.kind != kind) || object.spec.template.spec.containers.all(container, (!(!(has(container.resources)) || !(has(container.resources.requests)) || !(has(container.resources.requests.cpu))) &&
-        params.settings.cpuRequestMin <= int(container.resources.requests.cpu) &&
-        params.settings.cpuRequestMax >= int(container.resources.requests.cpu)) &&
+        quantity(string(params.settings.cpuRequestMin)).compareTo(quantity(string(container.resources.requests.cpu))) != 1 &&
+        quantity(string(params.settings.cpuRequestMax)).compareTo(quantity(string(container.resources.requests.cpu))) != -1) &&
         (!(!(has(container.resources.limits)) || !(has(container.resources.limits.cpu))) &&
-        params.settings.cpuLimitMin <= int(container.resources.limits.cpu) &&
-        params.settings.cpuLimitMax >= int(container.resources.limits.cpu)))
+        quantity(string(params.settings.cpuLimitMin)).compareTo(quantity(string(container.resources.limits.cpu))) != 1 &&
+        quantity(string(params.settings.cpuLimitMax)).compareTo(quantity(string(container.resources.limits.cpu))) != -1))
       message: "Workloads contains container/s with cpu limit or request not set or they are not in the specified range! (see more at https://kubescape.io/docs/controls/c-0050/)"
 
     - expression: >
         object.kind != 'CronJob' || object.spec.jobTemplate.spec.template.spec.containers.all(container, (!(!(has(container.resources)) || !(has(container.resources.requests)) || !(has(container.resources.requests.cpu))) &&
-        params.settings.cpuRequestMin <= int(container.resources.requests.cpu) &&
-        params.settings.cpuRequestMax >= int(container.resources.requests.cpu)) &&
+        quantity(string(params.settings.cpuRequestMin)).compareTo(quantity(string(container.resources.requests.cpu))) != 1 &&
+        quantity(string(params.settings.cpuRequestMax)).compareTo(quantity(string(container.resources.requests.cpu))) != -1) &&
         (!(!(has(container.resources.limits)) || !(has(container.resources.limits.cpu))) &&
-        params.settings.cpuLimitMin <= int(container.resources.limits.cpu) &&
-        params.settings.cpuLimitMax >= int(container.resources.limits.cpu)))
+        quantity(string(params.settings.cpuLimitMin)).compareTo(quantity(string(container.resources.limits.cpu))) != 1 &&
+        quantity(string(params.settings.cpuLimitMax)).compareTo(quantity(string(container.resources.limits.cpu))) != -1))
       message: "CronJob contains container/s with cpu limit or request not set or they are not in the specified range! (see more at https://kubescape.io/docs/controls/c-0050/)"

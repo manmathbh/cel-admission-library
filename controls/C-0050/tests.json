@@ -24,6 +24,24 @@
         ]
     },
     {
+        "name": "Pod with container having cpu request and limits set in millicores is allowed",
+        "template": "pod.yaml",
+        "expected": "pass",
+        "field_change_list": [
+            "spec.containers.[0].resources.requests.cpu=250m",
+            "spec.containers.[0].resources.limits.cpu=1000m"
+        ]
+    },
+    {
+        "name": "Pod with container having cpu request below the millicore minimum is blocked",
+        "template": "pod.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.containers.[0].resources.requests.cpu=50m",
+            "spec.containers.[0].resources.limits.cpu=1000m"
+        ]
+    },
+    {
         "name": "Pod with container having cpu request and limits set and values not in the limit is blocked",
         "template": "pod.yaml",
         "expected": "fail",
@@ -46,6 +64,24 @@
         "field_change_list": [
             "spec.template.spec.containers.[0].resources.requests.cpu=3",
             "spec.template.spec.containers.[0].resources.limits.cpu=3"
+        ]
+    },
+    {
+        "name": "Deployment with container having cpu request and limits set in millicores is allowed",
+        "template": "deployment.yaml",
+        "expected": "pass",
+        "field_change_list": [
+            "spec.template.spec.containers.[0].resources.requests.cpu=250m",
+            "spec.template.spec.containers.[0].resources.limits.cpu=1000m"
+        ]
+    },
+    {
+        "name": "CronJob with container having cpu request and limits set in millicores is allowed",
+        "template": "cronjob.yaml",
+        "expected": "pass",
+        "field_change_list": [
+            "spec.jobTemplate.spec.template.spec.containers.[0].resources.requests.cpu=250m",
+            "spec.jobTemplate.spec.template.spec.containers.[0].resources.limits.cpu=1000m"
         ]
     }
 ]

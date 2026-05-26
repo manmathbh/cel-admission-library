@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: test-replicaset
+  labels:
+    admission-policy-test: abc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-replicaset
+  template:
+    metadata:
+      labels:
+        app: test-replicaset
+    spec:
+      containers:
+      - name: sleep
+        image: alpine
+        command: ["sh"]
+        args: ["-c", "while true; do sleep 1; done"]

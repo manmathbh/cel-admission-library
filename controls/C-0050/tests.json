@@ -29,7 +29,7 @@
         "expected": "pass",
         "field_change_list": [
             "spec.containers.[0].resources.requests.cpu=250m",
-            "spec.containers.[0].resources.limits.cpu=500m"
+            "spec.containers.[0].resources.limits.cpu=1000m"
         ]
     },
     {
@@ -38,7 +38,7 @@
         "expected": "fail",
         "field_change_list": [
             "spec.containers.[0].resources.requests.cpu=50m",
-            "spec.containers.[0].resources.limits.cpu=500m"
+            "spec.containers.[0].resources.limits.cpu=1000m"
         ]
     },
     {
@@ -72,7 +72,7 @@
         "expected": "pass",
         "field_change_list": [
             "spec.template.spec.containers.[0].resources.requests.cpu=250m",
-            "spec.template.spec.containers.[0].resources.limits.cpu=500m"
+            "spec.template.spec.containers.[0].resources.limits.cpu=1000m"
         ]
     },
     {
@@ -81,7 +81,7 @@
         "expected": "pass",
         "field_change_list": [
             "spec.jobTemplate.spec.template.spec.containers.[0].resources.requests.cpu=250m",
-            "spec.jobTemplate.spec.template.spec.containers.[0].resources.limits.cpu=500m"
+            "spec.jobTemplate.spec.template.spec.containers.[0].resources.limits.cpu=1000m"
         ]
     }
 ]

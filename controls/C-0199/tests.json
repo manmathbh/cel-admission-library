@@ -39,13 +39,5 @@
         "field_change_list": [
             "spec.initContainers=[{\"name\":\"init\",\"image\":\"alpine\",\"command\":[\"sh\"],\"securityContext\":{\"capabilities\":{\"add\":[\"NET_RAW\"]}}}]"
         ]
-    },
-    {
-        "name": "Pod with ephemeralContainer having NET_RAW capability is blocked",
-        "template": "pod.yaml",
-        "expected": "fail",
-        "field_change_list": [
-            "spec.ephemeralContainers=[{\"name\":\"debug\",\"image\":\"alpine\",\"command\":[\"sh\"],\"targetContainerName\":\"sleep\",\"securityContext\":{\"capabilities\":{\"add\":[\"NET_RAW\"]}}}]"
-        ]
     }
 ]

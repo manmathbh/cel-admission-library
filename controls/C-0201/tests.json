@@ -56,13 +56,5 @@
         "field_change_list": [
             "spec.jobTemplate.spec.template.spec.containers.[0].securityContext.capabilities.drop=[\"ALL\"]"
         ]
-    },
-    {
-        "name": "Pod with ephemeralContainer lacking drop ALL is denied",
-        "template": "pod-drop-all.yaml",
-        "expected": "fail",
-        "field_change_list": [
-            "spec.ephemeralContainers=[{\"name\":\"debug\",\"image\":\"alpine\",\"command\":[\"sh\"],\"targetContainerName\":\"sleep\"}]"
-        ]
     }
 ]

@@ -1,43 +1,51 @@
 [
     {
-        "name": "Pod without capabilities is allowed",
+        "name": "Pod without capabilities is denied",
         "template": "pod.yaml",
-        "expected": "pass"
-    },
-    {
-        "name": "Pod with NET_RAW capability is blocked",
-        "template": "pod-capabilities.yaml",
         "expected": "fail"
     },
     {
-        "name": "Pod with only SYS_ADM capability (no NET_RAW) is allowed",
+        "name": "Pod with drop ALL is allowed",
+        "template": "pod-drop-all.yaml",
+        "expected": "pass"
+    },
+    {
+        "name": "Pod with drop NET_RAW is allowed",
         "template": "pod-for-list-items.yaml",
         "expected": "pass"
     },
     {
-        "name": "Deployment without capabilities is allowed",
+        "name": "Deployment without capabilities is denied",
         "template": "deployment.yaml",
-        "expected": "pass"
-    },
-    {
-        "name": "Deployment with NET_RAW capability is blocked",
-        "template": "deployment-for-list-items.yaml",
         "expected": "fail"
     },
     {
-        "name": "CronJob with NET_RAW capability is blocked",
-        "template": "cronjob.yaml",
-        "expected": "fail",
+        "name": "Deployment with drop ALL is allowed",
+        "template": "deployment.yaml",
+        "expected": "pass",
         "field_change_list": [
-            "spec.jobTemplate.spec.template.spec.containers.[0].securityContext.capabilities.add=[\"NET_RAW\"]"
+            "spec.template.spec.containers.[0].securityContext.capabilities.drop=[\"ALL\"]"
         ]
     },
     {
-        "name": "Pod with initContainer having NET_RAW capability is blocked",
-        "template": "pod.yaml",
+        "name": "CronJob without capabilities is denied",
+        "template": "cronjob.yaml",
+        "expected": "fail"
+    },
+    {
+        "name": "CronJob with drop ALL is allowed",
+        "template": "cronjob.yaml",
+        "expected": "pass",
+        "field_change_list": [
+            "spec.jobTemplate.spec.template.spec.containers.[0].securityContext.capabilities.drop=[\"ALL\"]"
+        ]
+    },
+    {
+        "name": "Pod with initContainer lacking drop is denied",
+        "template": "pod-drop-all.yaml",
         "expected": "fail",
         "field_change_list": [
-            "spec.initContainers=[{\"name\":\"init\",\"image\":\"alpine\",\"command\":[\"sh\"],\"securityContext\":{\"capabilities\":{\"add\":[\"NET_RAW\"]}}}]"
+            "spec.initContainers=[{\"name\":\"init\",\"image\":\"alpine\",\"command\":[\"sh\"]}]"
         ]
     }
 ]

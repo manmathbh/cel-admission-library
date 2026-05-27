@@ -47,5 +47,13 @@
         "field_change_list": [
             "spec.initContainers=[{\"name\":\"init\",\"image\":\"alpine\",\"command\":[\"sh\"]}]"
         ]
+    },
+    {
+        "name": "Pod with drop ALL and add NET_RAW is denied",
+        "template": "pod-drop-all.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.containers.[0].securityContext.capabilities.add=[\"NET_RAW\"]"
+        ]
     }
 ]

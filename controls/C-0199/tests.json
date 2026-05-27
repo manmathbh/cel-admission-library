@@ -55,5 +55,13 @@
         "field_change_list": [
             "spec.containers.[0].securityContext.capabilities.add=[\"NET_RAW\"]"
         ]
+    },
+    {
+        "name": "Pod with drop ALL and add ALL is denied (loophole)",
+        "template": "pod-drop-all.yaml",
+        "expected": "fail",
+        "field_change_list": [
+            "spec.containers.[0].securityContext.capabilities.add=[\"ALL\"]"
+        ]
     }
 ]
